@@ -122,11 +122,11 @@ const Home = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
                         backgroundImage:
-                            "url('https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')",
-                        backgroundColor: "rgba(255, 255, 255, 0.2)",
-                        backgroundBlendMode: "lighten", // или overlay, multiply
+                            "url('https://images.unsplash.com/photo-1572635196237-14b3f281503f?fm=jpg&w=2070&q=80')",
                     }}
-                />
+                >
+                    <div className="absolute inset-0 bg-black/20"></div>
+                </div>
 
                 {/* Parallax Background Layer 1 - красные точки */}
                 <div
