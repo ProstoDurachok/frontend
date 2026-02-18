@@ -15,6 +15,7 @@ const Sunglasses = () => {
     frameType: [],
     color: [],
     brand: [],
+    child: [],
   });
 
   // Локальное состояние для слайдера
@@ -71,6 +72,7 @@ const Sunglasses = () => {
       frameType: [],
       color: [],
       brand: [],
+      child: [],
     });
     setPriceRange({ min: minPrice || 0, max: maxPrice || 70000 });
     setCurrentPage(1);
@@ -102,7 +104,7 @@ const Sunglasses = () => {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#9c0101] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#e31e24] mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Загрузка товаров...</p>
         </div>
       </div>
@@ -120,7 +122,7 @@ const Sunglasses = () => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-[#9c0101] text-white rounded-lg hover:bg-[#740000] transition-colors"
+            className="px-6 py-2 bg-[#e31e24] text-white rounded-lg hover:bg-[#c41c20] transition-colors"
           >
             Попробовать снова
           </button>
@@ -132,7 +134,7 @@ const Sunglasses = () => {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-[#740000] via-[#9c0101] to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/80 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white">
             Солнцезащитные очки
@@ -153,7 +155,7 @@ const Sunglasses = () => {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg ${
-                    viewMode === 'grid' ? 'bg-[#9c0101] text-white' : 'text-gray-600'
+                    viewMode === 'grid' ? 'bg-[#e31e24] text-white' : 'text-gray-600'
                   }`}
                 >
                   <Grid size={20} />
@@ -161,21 +163,21 @@ const Sunglasses = () => {
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg ${
-                    viewMode === 'list' ? 'bg-[#9c0101] text-white' : 'text-gray-600'
+                    viewMode === 'list' ? 'bg-[#e31e24] text-white' : 'text-gray-600'
                   }`}
                 >
                   <List size={20} />
                 </button>
               </div>
               <div className="text-sm text-gray-600">
-                Найдено: <span className="font-bold text-[#740000]">{total}</span> товаров
+                Найдено: <span className="font-bold text-[#c41c20]">{total}</span> товаров
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium text-gray-700">Сортировка:</span>
                 <select
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#9c0101] outline-none text-sm"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#e31e24] outline-none text-sm"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
@@ -188,7 +190,7 @@ const Sunglasses = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium text-gray-700">На странице:</span>
                 <select
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#9c0101] outline-none text-sm"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#e31e24] outline-none text-sm"
                   value={itemsPerPage}
                   onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 >
@@ -205,13 +207,13 @@ const Sunglasses = () => {
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow p-6 border border-gray-100 sticky top-24">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-[#740000] flex items-center space-x-2">
+                  <h3 className="text-lg font-bold text-[#c41c20] flex items-center space-x-2">
                     <Filter size={20} />
                     <span>Фильтры</span>
                   </h3>
                   <button
                     onClick={resetFilters}
-                    className="text-sm text-[#9c0101] hover:text-[#740000] flex items-center space-x-1"
+                    className="text-sm text-[#e31e24] hover:text-[#c41c20] flex items-center space-x-1"
                   >
                     <X size={14} />
                     <span>Сбросить</span>
@@ -293,6 +295,12 @@ const Sunglasses = () => {
                         onChange={() => toggleFilter('frameType', option.value)}
                       />
                     ))}
+                      <CheckboxFilter
+                        value="child"
+                        label="Детские оправы"
+                        checked={filters.child.includes("child")}
+                        onChange={() => toggleFilter('child', "child")}
+                      />
                   </FilterSection>
 
                   {/* Бренд */}
@@ -358,7 +366,7 @@ const Sunglasses = () => {
 // Оптимизированные компоненты
 const FilterSection = React.memo(({ title, icon, children }) => (
   <div>
-    <h4 className="font-semibold text-[#740000] mb-3 flex items-center space-x-2">
+    <h4 className="font-semibold text-[#c41c20] mb-3 flex items-center space-x-2">
       {typeof icon === 'string' ? <span>{icon}</span> : icon}
       <span>{title}</span>
     </h4>
@@ -378,12 +386,12 @@ const RadioFilter = React.memo(({ name, value, label, checked, onChange }) => (
     />
     <div
       className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-        checked ? 'border-[#9c0101] bg-[#9c0101]' : 'border-gray-300 group-hover:border-[#9c0101]'
+        checked ? 'border-[#e31e24] bg-[#e31e24]' : 'border-gray-300 group-hover:border-[#e31e24]'
       }`}
     >
       {checked && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
     </div>
-    <span className="text-gray-700 text-sm group-hover:text-[#740000]">
+    <span className="text-gray-700 text-sm group-hover:text-[#c41c20]">
       {label}
     </span>
   </label>
@@ -394,12 +402,12 @@ const CheckboxFilter = React.memo(({ value, label, checked, onChange }) => (
     <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
     <div
       className={`w-4 h-4 border-2 rounded flex items-center justify-center ${
-        checked ? 'border-[#9c0101] bg-[#9c0101]' : 'border-gray-300 group-hover:border-[#9c0101]'
+        checked ? 'border-[#e31e24] bg-[#e31e24]' : 'border-gray-300 group-hover:border-[#e31e24]'
       }`}
     >
       {checked && <Check size={10} className="text-white" />}
     </div>
-    <span className="text-gray-700 text-sm group-hover:text-[#740000]">
+    <span className="text-gray-700 text-sm group-hover:text-[#c41c20]">
       {label}
     </span>
   </label>
@@ -411,7 +419,7 @@ const ColorFilter = React.memo(({ option, checked, onChange }) => (
     <div
       className={`relative w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center group-hover:scale-105 ${
         checked
-          ? 'border-[#9c0101] ring-2 ring-[#9c0101]/30 scale-110 shadow-md'
+          ? 'border-[#e31e24] ring-2 ring-[#e31e24]/30 scale-110 shadow-md'
           : 'border-gray-300'
       }`}
       style={{ backgroundColor: option.color }}
@@ -419,7 +427,7 @@ const ColorFilter = React.memo(({ option, checked, onChange }) => (
       {checked && (
         <>
           <div className="absolute inset-0 bg-white/20 rounded-full" />
-          <Check size={12} className="text-[#9c0101] relative z-10" />
+          <Check size={12} className="text-[#e31e24] relative z-10" />
         </>
       )}
     </div>
@@ -438,12 +446,10 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
     const percentage = offsetX / rect.width;
     const newPrice = Math.round(minPrice + percentage * (maxPrice - minPrice));
     if (isDragging === 'min') {
-      // Не позволяем минимуму превышать максимум
       if (newPrice <= priceRange.max) {
         onMinChange({ target: { value: newPrice.toString() } });
       }
     } else if (isDragging === 'max') {
-      // Не позволяем максимуму быть меньше минимума
       if (newPrice >= priceRange.min) {
         onMaxChange({ target: { value: newPrice.toString() } });
       }
@@ -459,8 +465,8 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
 
   // Обработчик начала перетаскивания
   const handleMouseDown = useCallback((e, type) => {
-    e.preventDefault(); // Предотвращаем потерю фокуса
-    setIsDragging(type); // Добавляем глобальные обработчики
+    e.preventDefault();
+    setIsDragging(type);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
@@ -471,8 +477,8 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
 
   return (
     <div>
-      <h4 className="font-semibold text-[#740000] mb-3 flex items-center space-x-2">
-        <DollarSign size={18} className="text-[#9c0101]" />
+      <h4 className="font-semibold text-[#c41c20] mb-3 flex items-center space-x-2">
+        <DollarSign size={18} className="text-[#e31e24]" />
         <span>Цена, ₽</span>
       </h4>
       <div className="space-y-4">
@@ -486,7 +492,7 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
           <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
           {/* Выделенная область между ручками */}
           <div
-            className="absolute top-1/2 h-1.5 bg-gradient-to-r from-[#9c0101] to-[#740000] rounded-full transform -translate-y-1/2"
+            className="absolute top-1/2 h-1.5 bg-gradient-to-r from-[#e31e24] to-[#c41c20] rounded-full transform -translate-y-1/2"
             style={{
               left: `${minPercent}%`,
               width: `${maxPercent - minPercent}%`,
@@ -494,13 +500,13 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
           ></div>
           {/* Ручка минимума */}
           <div
-            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#9c0101] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20 hover:scale-110 transition-transform"
+            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#e31e24] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20 hover:scale-110 transition-transform"
             style={{ left: `${minPercent}%` }}
             onMouseDown={(e) => handleMouseDown(e, 'min')}
           ></div>
           {/* Ручка максимума */}
           <div
-            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#9c0101] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20 hover:scale-110 transition-transform"
+            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#e31e24] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-20 hover:scale-110 transition-transform"
             style={{ left: `${maxPercent}%` }}
             onMouseDown={(e) => handleMouseDown(e, 'max')}
           ></div>
@@ -513,7 +519,7 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
 const ProductCard = React.memo(({ product, viewMode }) => (
   <Link
     to={`/product/${product.id}`}
-    className={`bg-white rounded-xl shadow overflow-hidden group border border-gray-100 hover:border-[#9c0101]/30 transition-all ${
+    className={`bg-white rounded-xl shadow overflow-hidden group border border-gray-100 hover:border-[#e31e24]/30 transition-all ${
       viewMode === 'list' ? 'flex' : 'block'
     }`}
   >
@@ -530,15 +536,15 @@ const ProductCard = React.memo(({ product, viewMode }) => (
       />
     </div>
     <div className="p-6 flex-1">
-      <p className="text-sm text-[#9c0101] font-semibold mb-2">{product.brand}</p>
-      <h3 className="text-lg font-bold text-[#740000] mb-2 group-hover:text-[#9c0101]">
+      <p className="text-sm text-[#e31e24] font-semibold mb-2">{product.brand}</p>
+      <h3 className="text-lg font-bold text-[#c41c20] mb-2 group-hover:text-[#e31e24]">
         {product.name}
       </h3>
       <div className="flex items-center justify-between mt-4">
-        <p className="text-2xl font-bold text-[#740000]">
+        <p className="text-2xl font-bold text-[#c41c20]">
           {product.price.toLocaleString('ru-RU')} ₽
         </p>
-        <button className="px-6 py-2 bg-[#9c0101] text-white rounded-lg hover:bg-[#740000] transition-colors">
+        <button className="px-6 py-2 bg-[#e31e24] text-white rounded-lg hover:bg-[#c41c20] transition-colors">
           Подробнее
         </button>
       </div>
@@ -563,7 +569,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => (
           key={page}
           onClick={() => onPageChange(page)}
           className={`px-4 py-2 rounded-lg ${
-            currentPage === page ? 'bg-[#9c0101] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            currentPage === page ? 'bg-[#e31e24] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           {page}

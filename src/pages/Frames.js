@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Filter, Grid, List, X, Check, Eye, DollarSign, MapPin, Tag, Palette, Settings } from 'lucide-react';
 import { useWooProducts } from '@/hooks/useWooProducts';
 
 const Frames = () => {
+  const location = useLocation();
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('default');
   const [itemsPerPage, setItemsPerPage] = useState(16);
@@ -15,12 +16,11 @@ const Frames = () => {
     frameType: [],
     color: [],
     brand: [],
+    child: [],
   });
 
-  // Локальное состояние для слайдера
   const [priceRange, setPriceRange] = useState({ min: 0, max: 70000 });
 
-  // Загружаем продукты + опции + min/max цены
   const {
     products: displayedProducts,
     loading,
@@ -40,22 +40,19 @@ const Frames = () => {
     priceRange,
     itemsPerPage,
     currentPage,
-    '104' // Category ID for Оправы
+    '104'
   );
 
-  // Инициализируем слайдер при первой загрузке
   useEffect(() => {
     if (minPrice !== undefined && maxPrice !== undefined && priceRange.min === 0 && priceRange.max === 70000) {
       setPriceRange({ min: minPrice, max: maxPrice });
     }
   }, [minPrice, maxPrice]);
 
-  // Сбрасываем страницу при изменении фильтров
   useEffect(() => {
     setCurrentPage(1);
   }, [filters, sortBy, priceRange, itemsPerPage]);
 
-  // Оптимизированные обработчики
   const toggleFilter = useCallback((key, value) => {
     setFilters(prev => ({
       ...prev,
@@ -71,12 +68,28 @@ const Frames = () => {
       frameType: [],
       color: [],
       brand: [],
+      child: [],
     });
     setPriceRange({ min: minPrice || 0, max: maxPrice || 70000 });
     setCurrentPage(1);
   }, [minPrice, maxPrice]);
 
-  // Оптимизированные обработчики слайдера
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+
+  useEffect(() => {
+    const brandFromUrl = queryParams.get('brand');
+    if (brandFromUrl && brandOptions.length > 0) {
+      const found = brandOptions.find(
+        opt => opt.label.toLowerCase() === brandFromUrl.toLowerCase() ||
+               opt.value.toString() === brandFromUrl
+      );
+      if (found && !filters.brand.includes(found.value)) {
+        setFilters(prev => ({ ...prev, brand: [found.value] }));
+        setCurrentPage(1);
+      }
+    }
+  }, [queryParams, brandOptions, filters.brand]);
+
   const handleMinPriceChange = useCallback((e) => {
     setPriceRange(prev => {
       const newMin = Math.max(Number(e.target.value), minPrice || 0);
@@ -95,14 +108,13 @@ const Frames = () => {
     });
   }, [minPrice, maxPrice]);
 
-  // Пагинация
   const totalPages = useMemo(() => Math.ceil(total / itemsPerPage), [total, itemsPerPage]);
 
   if (loading) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#9c0101] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#c8102e] mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Загрузка товаров...</p>
         </div>
       </div>
@@ -114,13 +126,13 @@ const Frames = () => {
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="text-red-500" size={24} />
+            <X className="text-[#c8102e]" size={24} />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Ошибка загрузки</h3>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-[#9c0101] text-white rounded-lg hover:bg-[#740000] transition-colors"
+            className="px-6 py-2 bg-[#c8102e] text-white rounded-lg hover:bg-[#a50d24] transition-colors"
           >
             Попробовать снова
           </button>
@@ -132,17 +144,17 @@ const Frames = () => {
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-[#740000] via-[#9c0101] to-blue-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_2px,transparent_0)] bg-[length:60px_60px]" />
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600 rounded-full opacity-10 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-[#9c0101] rounded-full opacity-10 blur-3xl" />
-       
+      <section className="py-20 bg-gradient-to-br from-[#a50d24] via-[#c8102e] to-[#c8102e]/90 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2)_2px,transparent_0)] bg-[length:50px_50px]" />
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#c8102e]/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-[#a50d24]/30 rounded-full blur-3xl" />
+
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" data-testid="frames-title">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">
             Оправы
           </h1>
-          <p className="text-xl md:text-2xl text-white/95 mb-6">
-            Подберите идеальные оправы от ведущих мировых брендов
+          <p className="text-xl md:text-2xl text-white/95">
+            Идеальный выбор оправ от мировых брендов
           </p>
         </div>
       </section>
@@ -153,38 +165,33 @@ const Frames = () => {
           {/* Controls Bar */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-white rounded-xl p-2 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200">
+              <div className="flex items-center space-x-2 bg-white rounded-xl p-2 shadow border border-gray-200">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all duration-300 ${
-                    viewMode === 'grid'
-                      ? 'bg-[#9c0101] text-white shadow-[0_4px_14px_0_rgba(156,1,1,0.3)]'
-                      : 'text-gray-600 hover:text-[#9c0101]'
+                  className={`p-2 rounded-lg transition-all ${
+                    viewMode === 'grid' ? 'bg-[#c8102e] text-white shadow-md' : 'text-gray-600 hover:text-[#c8102e]'
                   }`}
                 >
                   <Grid size={20} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-all duration-300 ${
-                    viewMode === 'list'
-                      ? 'bg-[#9c0101] text-white shadow-[0_4px_14px_0_rgba(156,1,1,0.3)]'
-                      : 'text-gray-600 hover:text-[#9c0101]'
+                  className={`p-2 rounded-lg transition-all ${
+                    viewMode === 'list' ? 'bg-[#c8102e] text-white shadow-md' : 'text-gray-600 hover:text-[#c8102e]'
                   }`}
                 >
                   <List size={20} />
                 </button>
               </div>
-             
               <div className="text-sm text-gray-600">
-                Показано: <span className="font-bold text-[#740000]">{total}</span> товаров
+                Найдено: <span className="font-bold text-[#c8102e]">{total}</span> товаров
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-medium text-gray-700">Сортировка:</span>
                 <select
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#9c0101] focus:ring-2 focus:ring-[#9c0101]/20 outline-none transition-all text-sm"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#c8102e] focus:ring-2 focus:ring-[#c8102e]/20 outline-none text-sm transition-all"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
@@ -195,9 +202,9 @@ const Frames = () => {
                 </select>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-gray-700">Показать:</span>
+                <span className="text-sm font-medium text-gray-700">На странице:</span>
                 <select
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#9c0101] focus:ring-2 focus:ring-[#9c0101]/20 outline-none transition-all text-sm"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:border-[#c8102e] focus:ring-2 focus:ring-[#c8102e]/20 outline-none text-sm transition-all"
                   value={itemsPerPage}
                   onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 >
@@ -213,21 +220,21 @@ const Frames = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100 sticky top-24">
+              <div className="bg-white rounded-xl shadow p-6 border border-gray-100 sticky top-24">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-[#740000] flex items-center space-x-2">
+                  <h3 className="text-lg font-bold text-[#c8102e] flex items-center space-x-2">
                     <Filter size={20} />
                     <span>Фильтры</span>
                   </h3>
                   <button
                     onClick={resetFilters}
-                    className="text-sm text-[#9c0101] hover:text-[#740000] transition-colors flex items-center space-x-1"
+                    className="text-sm text-[#c8102e] hover:text-[#a50d24] flex items-center space-x-1 transition-colors"
                   >
-                    <X size={14} /> <span>Сбросить</span>
+                    <X size={14} />
+                    <span>Сбросить</span>
                   </button>
                 </div>
                 <div className="space-y-6">
-                  {/* Пол */}
                   <FilterSection title="Пол" icon="👤">
                     {genderOptions.map(option => (
                       <RadioFilter
@@ -241,8 +248,7 @@ const Frames = () => {
                     ))}
                   </FilterSection>
 
-                  {/* Страна */}
-                  <FilterSection title="Страна" icon={<MapPin size={18} className="text-[#9c0101]" />}>
+                  <FilterSection title="Страна" icon={<MapPin size={18} className="text-[#c8102e]" />}>
                     {countryOptions.map(option => (
                       <RadioFilter
                         key={option.value}
@@ -255,7 +261,6 @@ const Frames = () => {
                     ))}
                   </FilterSection>
 
-                  {/* Цена (оптимизированный слайдер) */}
                   <PriceSliderSection
                     priceRange={priceRange}
                     minPrice={minPrice}
@@ -264,8 +269,7 @@ const Frames = () => {
                     onMaxChange={handleMaxPriceChange}
                   />
 
-                  {/* Цвет */}
-                  <FilterSection title="Цвет" icon={<Palette size={18} className="text-[#9c0101]" />}>
+                  <FilterSection title="Цвет" icon={<Palette size={18} className="text-[#c8102e]" />}>
                     <div className="grid grid-cols-4 gap-3">
                       {colorOptions.map(option => (
                         <ColorFilter
@@ -278,8 +282,7 @@ const Frames = () => {
                     </div>
                   </FilterSection>
 
-                  {/* Материал */}
-                  <FilterSection title="Материал" icon={<Settings size={18} className="text-[#9c0101]" />}>
+                  <FilterSection title="Материал" icon={<Settings size={18} className="text-[#c8102e]" />}>
                     {materialOptions.map(option => (
                       <CheckboxFilter
                         key={option.value}
@@ -291,8 +294,7 @@ const Frames = () => {
                     ))}
                   </FilterSection>
 
-                  {/* Тип оправы */}
-                  <FilterSection title="Тип оправы" icon={<Eye size={18} className="text-[#9c0101]" />}>
+                  <FilterSection title="Тип оправы" icon={<Eye size={18} className="text-[#c8102e]" />}>
                     {frameTypeOptions.map(option => (
                       <CheckboxFilter
                         key={option.value}
@@ -302,10 +304,15 @@ const Frames = () => {
                         onChange={() => toggleFilter('frameType', option.value)}
                       />
                     ))}
+                      <CheckboxFilter
+                        value="child"
+                        label="Детские оправы"
+                        checked={filters.child.includes("child")}
+                        onChange={() => toggleFilter('child', "child")}
+                      />
                   </FilterSection>
 
-                  {/* Бренд */}
-                  <FilterSection title="Бренд" icon={<Tag size={18} className="text-[#9c0101]" />}>
+                  <FilterSection title="Бренд" icon={<Tag size={18} className="text-[#c8102e]" />}>
                     <div className="max-h-48 overflow-y-auto space-y-2 pr-2">
                       {brandOptions.map(option => (
                         <CheckboxFilter
@@ -338,7 +345,6 @@ const Frames = () => {
                     ))}
                   </div>
 
-                  {/* Пагинация */}
                   {totalPages > 1 && (
                     <Pagination
                       currentPage={currentPage}
@@ -364,10 +370,11 @@ const Frames = () => {
   );
 };
 
-// Оптимизированные компоненты
+// === Компоненты (обновлённые цвета) ===
+
 const FilterSection = React.memo(({ title, icon, children }) => (
   <div>
-    <h4 className="font-semibold text-[#740000] mb-3 flex items-center space-x-2">
+    <h4 className="font-semibold text-[#c8102e] mb-3 flex items-center space-x-2">
       {typeof icon === 'string' ? <span>{icon}</span> : icon}
       <span>{title}</span>
     </h4>
@@ -377,22 +384,15 @@ const FilterSection = React.memo(({ title, icon, children }) => (
 
 const RadioFilter = React.memo(({ name, value, label, checked, onChange }) => (
   <label className="flex items-center space-x-3 cursor-pointer group">
-    <input
-      type="radio"
-      name={name}
-      value={value}
-      checked={checked}
-      onChange={() => onChange(value)}
-      className="sr-only"
-    />
+    <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} className="sr-only" />
     <div
-      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-        checked ? 'border-[#9c0101] bg-[#9c0101]' : 'border-gray-300 group-hover:border-[#9c0101]'
+      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+        checked ? 'border-[#c8102e] bg-[#c8102e]' : 'border-gray-300 group-hover:border-[#c8102e]'
       }`}
     >
       {checked && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
     </div>
-    <span className="text-gray-700 text-sm group-hover:text-[#740000] transition-colors">
+    <span className="text-gray-700 text-sm group-hover:text-[#c8102e] transition-colors">
       {label}
     </span>
   </label>
@@ -402,13 +402,13 @@ const CheckboxFilter = React.memo(({ value, label, checked, onChange }) => (
   <label className="flex items-center space-x-3 cursor-pointer group">
     <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
     <div
-      className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all duration-300 ${
-        checked ? 'border-[#9c0101] bg-[#9c0101]' : 'border-gray-300 group-hover:border-[#9c0101]'
+      className={`w-4 h-4 border-2 rounded flex items-center justify-center transition-all ${
+        checked ? 'border-[#c8102e] bg-[#c8102e]' : 'border-gray-300 group-hover:border-[#c8102e]'
       }`}
     >
       {checked && <Check size={10} className="text-white" />}
     </div>
-    <span className="text-gray-700 text-sm group-hover:text-[#740000] transition-colors">
+    <span className="text-gray-700 text-sm group-hover:text-[#c8102e] transition-colors">
       {label}
     </span>
   </label>
@@ -418,107 +418,86 @@ const ColorFilter = React.memo(({ option, checked, onChange }) => (
   <label className="relative flex flex-col items-center cursor-pointer group">
     <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
     <div
-      className={`relative w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center group-hover:scale-105 z-0 ${
+      className={`relative w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center group-hover:scale-105 ${
         checked
-          ? 'border-[#9c0101] ring-2 ring-[#9c0101]/30 scale-110 shadow-md'
-          : 'border-gray-300 hover:border-[#9c0101]'
+          ? 'border-[#c8102e] ring-2 ring-[#c8102e]/30 scale-110 shadow-md'
+          : 'border-gray-300 group-hover:border-[#c8102e]'
       }`}
       style={{ backgroundColor: option.color }}
     >
       {checked && (
         <>
           <div className="absolute inset-0 bg-white/20 rounded-full" />
-          <Check size={12} className="text-[#9c0101] relative z-10 drop-shadow-lg" />
+          <Check size={12} className="text-[#c8102e] relative z-10" />
         </>
       )}
     </div>
-    {/* Tooltip */}
-    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+    <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
       {option.label}
     </span>
   </label>
 ));
 
 const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinChange, onMaxChange }) => {
-  const [isDragging, setIsDragging] = useState(null); // 'min', 'max', или null
+  const [isDragging, setIsDragging] = useState(null);
   const sliderRef = useRef(null);
 
-  // Обработчик движения мыши при перетаскивании
   const handleMouseMove = useCallback((e) => {
     if (!isDragging || !sliderRef.current) return;
     const rect = sliderRef.current.getBoundingClientRect();
     const offsetX = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
     const percentage = offsetX / rect.width;
     const newPrice = Math.round(minPrice + percentage * (maxPrice - minPrice));
-    if (isDragging === 'min') {
-      // Не позволяем минимуму превышать максимум
-      if (newPrice <= priceRange.max) {
-        onMinChange({ target: { value: newPrice.toString() } });
-      }
-    } else if (isDragging === 'max') {
-      // Не позволяем максимуму быть меньше минимума
-      if (newPrice >= priceRange.min) {
-        onMaxChange({ target: { value: newPrice.toString() } });
-      }
+    if (isDragging === 'min' && newPrice <= priceRange.max) {
+      onMinChange({ target: { value: newPrice.toString() } });
+    } else if (isDragging === 'max' && newPrice >= priceRange.min) {
+      onMaxChange({ target: { value: newPrice.toString() } });
     }
-  }, [isDragging, minPrice, maxPrice, priceRange.max, priceRange.min, onMinChange, onMaxChange]);
+  }, [isDragging, minPrice, maxPrice, priceRange, onMinChange, onMaxChange]);
 
-  // Обработчик окончания перетаскивания
   const handleMouseUp = useCallback(() => {
     setIsDragging(null);
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
   }, [handleMouseMove]);
 
-  // Обработчик начала перетаскивания
   const handleMouseDown = useCallback((e, type) => {
-    e.preventDefault(); // Предотвращаем потерю фокуса
-    setIsDragging(type); // Добавляем глобальные обработчики
+    e.preventDefault();
+    setIsDragging(type);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]);
+  }, [handleMouseMove]);
 
-  // Вычисляем позиции ручек в процентах
-  const minPercent = ((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100;
-  const maxPercent = ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100;
+  const minPercent = minPrice < maxPrice ? ((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100 : 0;
+  const maxPercent = minPrice < maxPrice ? ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100 : 100;
 
   return (
     <div>
-      <h4 className="font-semibold text-[#740000] mb-3 flex items-center space-x-2">
-        <DollarSign size={18} className="text-[#9c0101]" />
+      <h4 className="font-semibold text-[#c8102e] mb-3 flex items-center space-x-2">
+        <DollarSign size={18} className="text-[#c8102e]" />
         <span>Цена, ₽</span>
       </h4>
       <div className="space-y-4">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">от {priceRange.min.toLocaleString('ru-RU')}</span>
-          <span className="text-gray-600">до {priceRange.max.toLocaleString('ru-RU')}</span>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>от {priceRange.min.toLocaleString('ru-RU')}</span>
+          <span>до {priceRange.max.toLocaleString('ru-RU')}</span>
         </div>
-        {/* Контейнер для слайдера */}
-        <div ref={sliderRef} className="relative py-4">
-          {/* Track */}
-          <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
-         
-          {/* Active range */}
+        <div ref={sliderRef} className="relative h-10 cursor-pointer">
+          <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 rounded-full -translate-y-1/2" />
           <div
-            className="absolute top-1/2 h-1.5 bg-gradient-to-r from-[#9c0101] to-[#740000] rounded-full transform -translate-y-1/2"
-            style={{
-              left: `${minPercent}%`,
-              width: `${maxPercent - minPercent}%`
-            }}
-          ></div>
-         
-          {/* Min thumb */}
+            className="absolute top-1/2 h-1.5 bg-gradient-to-r from-[#c8102e] to-[#a50d24] rounded-full -translate-y-1/2"
+            style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
+          />
           <div
-            className="absolute top-1/2 w-4 h-4 bg-white border-2 border-[#9c0101] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-10 hover:scale-125 transition-transform"
+            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#c8102e] rounded-full shadow-lg -translate-y-1/2 -translate-x-1/2 cursor-pointer hover:scale-110 transition-transform z-20"
             style={{ left: `${minPercent}%` }}
             onMouseDown={(e) => handleMouseDown(e, 'min')}
-          ></div>
-          {/* Max thumb */}
+          />
           <div
-            className="absolute top-1/2 w-4 h-4 bg-white border-2 border-[#9c0101] rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 cursor-pointer z-10 hover:scale-125 transition-transform"
+            className="absolute top-1/2 w-5 h-5 bg-white border-2 border-[#c8102e] rounded-full shadow-lg -translate-y-1/2 -translate-x-1/2 cursor-pointer hover:scale-110 transition-transform z-20"
             style={{ left: `${maxPercent}%` }}
             onMouseDown={(e) => handleMouseDown(e, 'max')}
-          ></div>
+          />
         </div>
       </div>
     </div>
@@ -528,15 +507,14 @@ const PriceSliderSection = React.memo(({ priceRange, minPrice, maxPrice, onMinCh
 const ProductCard = React.memo(({ product, viewMode }) => (
   <Link
     to={`/product/${product.id}`}
-    className={`bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] overflow-hidden group border border-gray-100 hover:border-[#9c0101]/30 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] ${
+    className={`bg-white rounded-xl shadow overflow-hidden group border border-gray-100 hover:border-[#c8102e]/40 transition-all duration-300 hover:shadow-xl ${
       viewMode === 'list' ? 'flex' : 'block'
     }`}
-    data-testid={`product-${product.id}`}
   >
     <div
       className={`${
         viewMode === 'list' ? 'w-48 h-48 flex-shrink-0' : 'aspect-square'
-      } bg-gradient-to-br from-gray-50 to-white p-6 overflow-hidden`}
+      } bg-gray-50 p-6`}
     >
       <img
         src={product.image}
@@ -546,13 +524,15 @@ const ProductCard = React.memo(({ product, viewMode }) => (
       />
     </div>
     <div className="p-6 flex-1">
-      <p className="text-sm text-[#9c0101] font-semibold mb-2">{product.brand}</p>
-      <h3 className="text-lg font-bold text-[#740000] mb-2 group-hover:text-[#9c0101] transition-colors">
+      <p className="text-sm text-[#c8102e] font-semibold mb-2">{product.brand}</p>
+      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#c8102e] transition-colors">
         {product.name}
       </h3>
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-2xl font-bold text-[#740000]">{product.price.toLocaleString('ru-RU')} ₽</p>
-        <button className="inline-flex items-center justify-center px-6 py-2 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_4px_14px_0_rgba(156,1,1,0.3)] hover:shadow-[0_6px_20px_rgba(156,1,1,0.4)] hover:-translate-y-0.5">
+      <div className="flex items-center justify-between">
+        <p className="text-2xl font-bold text-[#c8102e]">
+          {product.price.toLocaleString('ru-RU')} ₽
+        </p>
+        <button className="px-5 py-2 bg-[#c8102e] text-white rounded-lg hover:bg-[#a50d24] transition-colors font-medium">
           Подробнее
         </button>
       </div>
@@ -561,11 +541,11 @@ const ProductCard = React.memo(({ product, viewMode }) => (
 ));
 
 const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => (
-  <div className="flex justify-center mt-8 space-x-2">
+  <div className="flex justify-center mt-10 space-x-2 flex-wrap gap-2">
     <button
       onClick={() => onPageChange(currentPage - 1)}
       disabled={currentPage === 1}
-      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-300"
+      className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-200 transition-colors"
     >
       Назад
     </button>
@@ -576,9 +556,11 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-4 py-2 rounded-lg ${
-            currentPage === page ? 'bg-[#9c0101] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
+          className={`px-4 py-2 rounded-lg min-w-[40px] ${
+            currentPage === page
+              ? 'bg-[#c8102e] text-white shadow-md'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          } transition-colors`}
         >
           {page}
         </button>
@@ -587,7 +569,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => (
     <button
       onClick={() => onPageChange(currentPage + 1)}
       disabled={currentPage === totalPages}
-      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-300"
+      className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-200 transition-colors"
     >
       Вперед
     </button>

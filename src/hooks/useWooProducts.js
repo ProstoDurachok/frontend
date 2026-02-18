@@ -165,7 +165,8 @@ export const useWooProducts = (filters, sortBy, priceRange, itemsPerPage, curren
         type: attributes.frameType?.[0] || 'Не указан',
         color: attributes.color || [],
         material: attributes.material || [],
-        categories: product.categories?.map(cat => cat.name) || []
+        categories: product.categories?.map(cat => cat.name) || [],
+        sku: product.sku || '—',
       };
     };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, CreditCard, Package, ShoppingCart, LogOut, ArrowLeft, Star, Award, Crown } from 'lucide-react';
+import { User, CreditCard, Package, ShoppingCart, LogOut, ArrowLeft, Star, Award, Crown, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext.js';
 import { useCart } from '@/contexts/CartContext.js';
 import axios from 'axios';
@@ -86,10 +86,10 @@ const Profile = () => {
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-br from-white via-blue-50 to-white">
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-[#740000] via-[#9c0101] to-blue-900 text-white relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/80 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_2px,transparent_0)] bg-[length:60px_60px]" />
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600 rounded-full opacity-10 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-[#9c0101] rounded-full opacity-10 blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-[#e31e24] rounded-full opacity-10 blur-3xl" />
         
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <div className="text-center">
@@ -106,11 +106,11 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto px-4 space-y-8">
           {/* Loyalty Card */}
           <div className="bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] p-8 border border-gray-100">
-            <h2 className="text-3xl font-bold text-[#740000] mb-6 text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center justify-center">
-              <Crown size={32} className="mr-3 text-[#9c0101]" />
+            <h2 className="text-3xl font-bold text-[#c41c20] mb-6 text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center justify-center">
+              <Crown size={32} className="mr-3 text-[#e31e24]" />
               Карта лояльности
             </h2>
-            <div className="bg-gradient-to-br from-[#740000] via-[#9c0101] to-blue-800 rounded-2xl p-8 text-white text-center shadow-[0_8px_32px_rgba(116,0,0,0.4)] relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/90 rounded-2xl p-8 text-white text-center shadow-[0_8px_32px_rgba(227,30,36,0.4)] relative overflow-hidden">
               <div className="absolute top-4 right-4 w-16 h-16 bg-white/10 rounded-full blur-xl" />
               <div className="absolute bottom-4 left-4 w-12 h-12 bg-blue-400/20 rounded-full blur-lg" />
               
@@ -138,8 +138,8 @@ const Profile = () => {
 
           {/* Cart Summary */}
           <div className="bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] p-8 border border-gray-100">
-            <h2 className="text-3xl font-bold text-[#740000] mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center">
-              <ShoppingCart size={32} className="mr-3 text-[#9c0101]" />
+            <h2 className="text-3xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center">
+              <ShoppingCart size={32} className="mr-3 text-[#e31e24]" />
               Корзина
             </h2>
             {cart.length === 0 ? (
@@ -150,7 +150,7 @@ const Profile = () => {
                 <p className="text-gray-600 text-lg mb-2">Корзина пуста</p>
                 <Link 
                   to="/frames"
-                  className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
+                  className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4)] hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
                 >
                   <span className="relative z-10">Начать покупки</span>
                 </Link>
@@ -160,16 +160,16 @@ const Profile = () => {
                 {cart.map((item) => {
                   const imageSrc = item.images?.[0] || item.image || 'https://via.placeholder.com/64x64?text=Очки';
                   return (
-                    <div key={item.id} className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-blue-50 rounded-xl border border-gray-200 group hover:border-[#9c0101]/30 transition-all duration-300">
+                    <div key={item.id} className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-blue-50 rounded-xl border border-gray-200 group hover:border-[#e31e24]/30 transition-all duration-300">
                       <div className="flex items-center space-x-4">
                         <img src={imageSrc} alt={item.name} className="w-16 h-16 object-contain rounded-lg bg-white p-2 border border-gray-200" />
                         <div>
-                          <h4 className="font-semibold text-[#740000] group-hover:text-[#9c0101] transition-colors duration-300">{item.name}</h4>
+                          <h4 className="font-semibold text-[#c41c20] group-hover:text-[#e31e24] transition-colors duration-300">{item.name}</h4>
                           <p className="text-gray-600">{Number(item.price).toLocaleString('ru-RU')} ₽</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-[#9c0101] text-lg">{(Number(item.price) * item.quantity).toLocaleString('ru-RU')} ₽</p>
+                        <p className="font-bold text-[#e31e24] text-lg">{(Number(item.price) * item.quantity).toLocaleString('ru-RU')} ₽</p>
                         <p className="text-sm text-gray-500">x{item.quantity}</p>
                       </div>
                     </div>
@@ -177,12 +177,12 @@ const Profile = () => {
                 })}
                 <div className="pt-6 border-t border-gray-200">
                   <div className="flex justify-between text-xl font-bold mb-6">
-                    <span className="text-[#740000]">Итого:</span>
-                    <span className="text-[#9c0101]">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                    <span className="text-[#c41c20]">Итого:</span>
+                    <span className="text-[#e31e24]">{totalPrice.toLocaleString('ru-RU')} ₽</span>
                   </div>
                   <Link
                     to="/checkout"
-                    className="w-full inline-flex items-center justify-center space-x-2 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] border border-[#9c0101]/20 hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
+                    className="w-full inline-flex items-center justify-center space-x-2 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] border border-[#e31e24]/20 hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
                   >
                     <CreditCard size={20} className="relative z-10" />
                     <span className="relative z-10 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">Оформить заказ</span>
@@ -194,13 +194,13 @@ const Profile = () => {
 
           {/* Orders */}
           <div className="bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] p-8 border border-gray-100">
-            <h2 className="text-3xl font-bold text-[#740000] mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center">
-              <Package size={32} className="mr-3 text-[#9c0101]" />
+            <h2 className="text-3xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] flex items-center">
+              <Package size={32} className="mr-3 text-[#e31e24]" />
               Мои заказы
             </h2>
             {loadingOrders ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9c0101] mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e31e24] mx-auto mb-4"></div>
                 <p className="text-gray-600">Загрузка заказов...</p>
               </div>
             ) : errorOrders ? (
@@ -220,14 +220,14 @@ const Profile = () => {
             ) : (
               <div className="space-y-4">
                 {orders.map((order) => (
-                  <div key={order.id} className="flex justify-between items-center p-6 bg-gradient-to-r from-white to-blue-50 rounded-xl border border-gray-200 group hover:border-[#9c0101]/30 transition-all duration-300 hover:-translate-y-1">
+                  <div key={order.id} className="flex justify-between items-center p-6 bg-gradient-to-r from-white to-blue-50 rounded-xl border border-gray-200 group hover:border-[#e31e24]/30 transition-all duration-300 hover:-translate-y-1">
                     <div>
-                      <p className="font-semibold text-[#740000] group-hover:text-[#9c0101] transition-colors duration-300">Заказ #{order.id}</p>
+                      <p className="font-semibold text-[#c41c20] group-hover:text-[#e31e24] transition-colors duration-300">Заказ #{order.id}</p>
                       <p className="text-sm text-gray-600">{order.date}</p>
                       <p className="text-sm text-gray-500">{order.items} товар(а)</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-lg text-[#9c0101]">{order.total}</p>
+                      <p className="font-bold text-lg text-[#e31e24]">{order.total}</p>
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold mt-2 ${
                         order.status === 'Доставлен' 
                           ? 'bg-green-100 text-green-800 border border-green-200' 

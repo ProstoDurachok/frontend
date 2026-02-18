@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CreditCard, MapPin, Phone, CheckCircle, AlertCircle, ShoppingCart, Store, User } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, CreditCard, MapPin, Phone, CheckCircle, AlertCircle, ShoppingCart, Store, User } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_WC_URL || 'https://egooptika.ru/wp-json/wc/v3';
 const CONSUMER_KEY = process.env.REACT_APP_WC_KEY;
@@ -13,15 +13,20 @@ const CheckoutPage = () => {
   const { cart, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [orderData, setOrderData] = useState({
     pickupPoint: 'ershov',
     paymentType: 'card',
     comment: '',
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [orderId, setOrderId] = useState(null);
+  
+  // ← Новое состояние — сохраняем сумму до очистки корзины
+  const [finalTotal, setFinalTotal] = useState(0);
 
   const handleChange = (e) => {
     setOrderData({
@@ -36,11 +41,15 @@ const CheckoutPage = () => {
       navigate('/auth');
       return;
     }
+
+    // ← Сохраняем сумму ДО любых действий с корзиной
+    setFinalTotal(totalPrice);
+
     setIsSubmitting(true);
     setError(null);
 
     if (!CONSUMER_KEY || !CONSUMER_SECRET) {
-      // Fallback to mock without error
+      // Mock-режим
       setTimeout(() => {
         setOrderSuccess(true);
         setOrderId(Math.floor(Math.random() * 10000).toString().padStart(4, '0'));
@@ -73,7 +82,7 @@ const CheckoutPage = () => {
           phone: user.phone || '',
           address_1: pickupAddress,
           city: 'Казань',
-          state: 'TA', // Tatarstan
+          state: 'TA',
           postcode: '420000',
           country: 'RU',
         },
@@ -115,7 +124,6 @@ const CheckoutPage = () => {
     } catch (err) {
       console.error('Ошибка создания заказа:', err);
       if (err.response?.status === 401) {
-        // Fallback to mock without error display
         setTimeout(() => {
           setOrderSuccess(true);
           setOrderId(Math.floor(Math.random() * 10000).toString().padStart(4, '0'));
@@ -135,13 +143,13 @@ const CheckoutPage = () => {
       <div className="min-h-screen pt-20 bg-gradient-to-br from-white via-blue-50 to-white flex items-center justify-center">
         <div className="text-center max-w-md mx-4">
           <AlertCircle size={64} className="text-red-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-[#740000] mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+          <h1 className="text-3xl font-bold text-[#c41c20] mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
             Авторизация требуется
           </h1>
           <p className="text-gray-600 mb-6">Войдите для оформления заказа.</p>
           <Link
             to="/auth"
-            className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
+            className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4)] hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
           >
             <User size={20} className="relative z-10" />
             <span className="relative z-10">Войти в аккаунт</span>
@@ -152,32 +160,32 @@ const CheckoutPage = () => {
   }
 
   if (orderSuccess) {
-    return (
-      <div className="min-h-screen pt-20 bg-gradient-to-br from-white via-blue-50 to-white flex items-center justify-center">
-        <div className="text-center max-w-md mx-4">
-          <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full mx-auto mb-6 flex items-center justify-center shadow-[0_8px_32px_rgba(34,197,94,0.4)]">
-            <CheckCircle size={40} className="text-white" />
+      return (
+        <div className="min-h-screen pt-20 bg-gradient-to-br from-white via-blue-50 to-white flex items-center justify-center">
+          <div className="text-center max-w-md mx-4">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full mx-auto mb-6 flex items-center justify-center shadow-[0_8px_32px_rgba(34,197,94,0.4)]">
+              <CheckCircle size={40} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-[#c41c20] mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+              Заказ оформлен!
+            </h1>
+            <p className="text-gray-600 mb-2">Номер заказа: #{orderId}</p>
+            <p className="text-xl font-bold text-[#e31e24] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
+              {finalTotal.toLocaleString('ru-RU')} ₽
+            </p>
+            <p className="text-gray-600 mb-6 text-sm">
+              С вами свяжется наш менеджер для подтверждения заказа
+            </p>
+            <Link
+              to="/profile"
+              className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4)] hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
+            >
+              <span className="relative z-10">Перейти в профиль</span>
+            </Link>
           </div>
-          <h1 className="text-3xl font-bold text-[#740000] mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-            Заказ оформлен!
-          </h1>
-          <p className="text-gray-600 mb-2">Номер заказа: #{orderId}</p>
-          <p className="text-xl font-bold text-[#9c0101] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
-            {totalPrice.toLocaleString('ru-RU')} ₽
-          </p>
-          <p className="text-gray-600 mb-6 text-sm">
-            С вами свяжется наш менеджер для подтверждения заказа
-          </p>
-          <Link
-            to="/profile"
-            className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
-          >
-            <span className="relative z-10">Перейти в профиль</span>
-          </Link>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
   const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
@@ -205,12 +213,12 @@ const CheckoutPage = () => {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
             <Link
               to="/cart"
-              className="inline-flex items-center space-x-2 text-[#9c0101] hover:text-[#740000] transition-colors duration-300 group"
+              className="inline-flex items-center space-x-2 text-[#e31e24] hover:text-[#c41c20] transition-colors duration-300 group"
             >
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-semibold">Вернуться в корзину</span>
             </Link>
-            <h1 className="text-3xl md:text-4xl font-bold text-[#740000] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#c41c20] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
               Оформление заказа
             </h1>
           </div>
@@ -223,36 +231,36 @@ const CheckoutPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100">
-              <h2 className="text-2xl font-bold text-[#740000] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
-                <ShoppingCart size={24} className="mr-3 text-[#9c0101]" />
+              <h2 className="text-2xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
+                <ShoppingCart size={24} className="mr-3 text-[#e31e24]" />
                 Ваш заказ ({totalItems} {totalItems === 1 ? 'товар' : totalItems < 5 ? 'товара' : 'товаров'})
               </h2>
               <div className="space-y-4 mb-6">
                 {cart.map((item) => (
                   <div key={item.id} className="flex justify-between items-center py-3 border-b border-gray-200 last:border-0 group">
                     <div className="flex-1">
-                      <span className="text-gray-700 group-hover:text-[#740000] transition-colors duration-300">
+                      <span className="text-gray-700 group-hover:text-[#c41c20] transition-colors duration-300">
                         {item.name}
                       </span>
                       <span className="text-sm text-gray-500 ml-2">×{item.quantity}</span>
                     </div>
-                    <span className="font-bold text-[#740000] group-hover:text-[#9c0101] transition-colors duration-300">
+                    <span className="font-bold text-[#c41c20] group-hover:text-[#e31e24] transition-colors duration-300">
                       {(Number(item.price || 0) * (item.quantity || 0)).toLocaleString('ru-RU')} ₽
                     </span>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between text-xl font-bold pt-4 border-t border-gray-200">
-                <span className="text-[#740000]">Итого к оплате:</span>
-                <span className="text-[#9c0101] drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
+                <span className="text-[#c41c20]">Итого к оплате:</span>
+                <span className="text-[#e31e24] drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
                   {totalPrice.toLocaleString('ru-RU')} ₽
                 </span>
               </div>
             </div>
 
             <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-[#740000] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
-                <Store size={24} className="mr-3 text-[#9c0101]" />
+              <h3 className="text-xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
+                <Store size={24} className="mr-3 text-[#e31e24]" />
                 Пункт самовывоза
               </h3>
               <div className="space-y-4">
@@ -268,15 +276,15 @@ const CheckoutPage = () => {
                     />
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 mt-1 ${
                       orderData.pickupPoint === point.id 
-                        ? 'border-[#9c0101] bg-[#9c0101]' 
-                        : 'border-gray-300 group-hover:border-[#9c0101]'
+                        ? 'border-[#e31e24] bg-[#e31e24]' 
+                        : 'border-gray-300 group-hover:border-[#e31e24]'
                     }`}>
                       {orderData.pickupPoint === point.id && (
                         <div className="w-2 h-2 bg-white rounded-full" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-[#740000] group-hover:text-[#9c0101] transition-colors duration-300">
+                      <p className="font-semibold text-[#c41c20] group-hover:text-[#e31e24] transition-colors duration-300">
                         {point.name}
                       </p>
                       <p className="text-gray-600 text-sm mt-1">{point.address}</p>
@@ -289,8 +297,8 @@ const CheckoutPage = () => {
             </div>
 
             <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-[#740000] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
-                <CreditCard size={24} className="mr-3 text-[#9c0101]" />
+              <h3 className="text-xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
+                <CreditCard size={24} className="mr-3 text-[#e31e24]" />
                 Способ оплаты
               </h3>
               <div className="space-y-4">
@@ -305,14 +313,14 @@ const CheckoutPage = () => {
                   />
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                     orderData.paymentType === 'card' 
-                      ? 'border-[#9c0101] bg-[#9c0101]' 
-                      : 'border-gray-300 group-hover:border-[#9c0101]'
+                      ? 'border-[#e31e24] bg-[#e31e24]' 
+                      : 'border-gray-300 group-hover:border-[#e31e24]'
                   }`}>
                     {orderData.paymentType === 'card' && (
                       <div className="w-2 h-2 bg-white rounded-full" />
                     )}
                   </div>
-                  <span className="text-gray-700 group-hover:text-[#740000] transition-colors duration-300">
+                  <span className="text-gray-700 group-hover:text-[#c41c20] transition-colors duration-300">
                     Банковской картой онлайн
                   </span>
                 </label>
@@ -327,14 +335,14 @@ const CheckoutPage = () => {
                   />
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                     orderData.paymentType === 'cash' 
-                      ? 'border-[#9c0101] bg-[#9c0101]' 
-                      : 'border-gray-300 group-hover:border-[#9c0101]'
+                      ? 'border-[#e31e24] bg-[#e31e24]' 
+                      : 'border-gray-300 group-hover:border-[#e31e24]'
                   }`}>
                     {orderData.paymentType === 'cash' && (
                       <div className="w-2 h-2 bg-white rounded-full" />
                     )}
                   </div>
-                  <span className="text-gray-700 group-hover:text-[#740000] transition-colors duration-300">
+                  <span className="text-gray-700 group-hover:text-[#c41c20] transition-colors duration-300">
                     Наличными при получении
                   </span>
                 </label>
@@ -342,15 +350,15 @@ const CheckoutPage = () => {
             </div>
 
             <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-[#740000] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
-                <Phone size={24} className="mr-3 text-[#9c0101]" />
+              <h3 className="text-xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
+                <Phone size={24} className="mr-3 text-[#e31e24]" />
                 Ваши контакты
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-white rounded-2xl border border-blue-200">
                   <User size={20} className="text-blue-600" />
                   <div>
-                    <p className="font-semibold text-[#740000]">{user.name}</p>
+                    <p className="font-semibold text-[#c41c20]">{user.name}</p>
                     <p className="text-gray-600 text-sm">{user.phone}</p>
                   </div>
                 </div>
@@ -364,7 +372,7 @@ const CheckoutPage = () => {
                     value={orderData.comment}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full p-4 border border-gray-300 rounded-2xl focus:border-[#9c0101] focus:ring-2 focus:ring-[#9c0101]/20 outline-none transition-all duration-300 resize-none"
+                    className="w-full p-4 border border-gray-300 rounded-2xl focus:border-[#e31e24] focus:ring-2 focus:ring-[#e31e24]/20 outline-none transition-all duration-300 resize-none"
                   />
                 </div>
               </div>
@@ -376,7 +384,7 @@ const CheckoutPage = () => {
               className={`w-full inline-flex items-center justify-center space-x-3 py-5 rounded-2xl font-semibold text-lg transition-all duration-300 relative overflow-hidden ${
                 isSubmitting || totalItems === 0
                   ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-[0_4px_16px_rgba(107,114,128,0.3)] cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105'
+                  : 'bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4)] hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105'
               } before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20`}
             >
               {isSubmitting ? (

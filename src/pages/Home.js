@@ -165,76 +165,76 @@ const Home = () => {
     const addresses = [
         {
             address: "г. Казань, Николая Ершова, 47",
-            phones: ["+7 (843) 272‒91‒65"],
+            phones: ["+7 951-896-71-17"],
             schedule: "Пн-Пт: 10.00 — 20.00 Сб: 10.00 — 18.00 Вс: выходной",
             mapUrl: "https://yandex.ru/maps/org/egooptika/73340528068/",
         },
         {
             address: "г. Казань, Меридианная, 4",
-            phones: ["+7 (843) 528‒07‒08"],
+            phones: ["+7 939-809-52-80"],
             schedule: "Пн-Пт: 9.00 — 20.00 Сб: 10.00 — 19:00 Вс: выходной",
             mapUrl: "https://yandex.ru/maps/org/egooptika/138533122876/",
         },
     ];
 
     return (
-        <div className="min-h-screen">
-            {/* Random Products Carousel */}
-            <section className="bg-gradient-to-r from-blue-50 to-white pt-8">
-                <div className="max-w-7xl mx-auto px-4 pt-12">
-                    <div className="relative">
-                        <div
-                            ref={carouselRef}
-                            className="flex overflow-x-auto pb-6 gap-4 scrollbar-hide scroll-smooth"
-                            style={{
-                                scrollbarWidth: "none",
-                                msOverflowStyle: "none",
-                            }}
-                        >
-                            {loadingProducts
-                                ? // Skeleton Loaders
-                                  [...Array(5)].map((_, index) => (
-                                      <div
-                                          key={index}
-                                          className="flex-shrink-0 w-48"
-                                      >
-                                          <div className="bg-gray-200 animate-pulse rounded-xl h-32 w-full"></div>
-                                          <div className="mt-3 px-3">
-                                              <div className="h-3 bg-gray-200 animate-pulse rounded w-3/4 mb-2"></div>
-                                              <div className="h-3 bg-gray-200 animate-pulse rounded w-1/2 mb-2"></div>
-                                              <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3"></div>
-                                          </div>
-                                      </div>
-                                  ))
-                                : randomProducts.map((product) => (
-                                      <Link
-                                          key={product.id}
-                                          to={`/product/${product.id}`}
-                                          className="flex-shrink-0 w-48 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
-                                      >
-                                          {/* Изменено с aspect-square на меньшую высоту */}
-                                          <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-white rounded-t-xl overflow-hidden p-3">
-                                              <img
-                                                  src={product.image}
-                                                  alt={product.name}
-                                                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-300"
-                                              />
-                                          </div>
-                                          <div className="p-3">
-                                              <div className="text-xs text-[#9c0101] font-semibold mb-1 line-clamp-1">
-                                                  {product.brand}
-                                              </div>
-                                              <div className="text-lg font-bold text-[#740000]">
-                                                  {product.price.toLocaleString(
-                                                      "ru-RU"
-                                                  )}{" "}
-                                                  ₽
-                                              </div>
-                                          </div>
-                                      </Link>
-                                  ))}
+        <div className="min-h-screen pt-28 md:pt-32 lg:pt-36">
+            {/* Random Products Carousel — теперь с авто-скроллом как у брендов */}
+            <section className="bg-gradient-to-r from-blue-50 to-white py-12">
+                <div className="max-w-7xl mx-auto px-4">
+
+                    <div className="relative overflow-hidden">
+                        {/* Градиент слева */}
+                        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-blue-50 via-blue-50/95 to-transparent z-10 pointer-events-none"></div>
+                        {/* Градиент справа */}
+                        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-blue-50 via-blue-50/95 to-transparent z-10 pointer-events-none"></div>
+
+                        <div className="flex overflow-hidden">
+                            <div className="flex animate-infinite-scroll gap-5 md:gap-6">
+                                {/* Дублируем дважды для плавной бесконечной прокрутки */}
+                                {[...randomProducts, ...randomProducts].map((product, idx) => (
+                                    <Link
+                                        key={`${product.id}-${idx}`}
+                                        to={`/product/${product.id}`}
+                                        className="flex-shrink-0 w-44 sm:w-48 md:w-56 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+                                    >
+                                        <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-white rounded-t-xl overflow-hidden p-3 md:p-4">
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-400"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div className="p-3 md:p-4">
+                                            <div className="text-xs md:text-sm text-[#9c0101] font-semibold mb-1 line-clamp-1">
+                                                {product.brand}
+                                            </div>
+                                            <div className="text-base md:text-lg font-bold text-[#740000]">
+                                                {product.price.toLocaleString("ru-RU")} ₽
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
                     </div>
+
+                    {/* Если товаров мало — показываем скелетоны только при загрузке */}
+                    {loadingProducts && randomProducts.length === 0 && (
+                        <div className="flex gap-5 overflow-x-auto pb-6">
+                            {[...Array(6)].map((_, i) => (
+                                <div key={i} className="flex-shrink-0 w-48">
+                                    <div className="bg-gray-200 animate-pulse rounded-xl h-36 w-full"></div>
+                                    <div className="mt-3 px-3">
+                                        <div className="h-3 bg-gray-200 animate-pulse rounded w-3/4 mb-2"></div>
+                                        <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                 </div>
             </section>
 
@@ -356,18 +356,17 @@ const Home = () => {
                                     <div
                                         key={`top-${index}`}
                                         className="flex-shrink-0 mx-4 md:mx-6 rounded-2xl p-6 transition-all duration-500 hover:scale-110 hover:shadow-2xl cursor-pointer bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white border border-gray-100/50 flex items-center justify-center w-32 md:w-40 h-24"
-                                    >
-                                        <img
+                                        >
+                                        <Link to={`/frames?brand=${encodeURIComponent(brand.name)}`}>
+                                            <img
                                             src={brand.icon}
                                             alt={brand.name}
                                             className="w-full h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-500 hover:drop-shadow-lg"
                                             onError={(e) => {
-                                                console.error(
-                                                    `Ошибка загрузки изображения для бренда: ${brand.name}`
-                                                );
                                                 e.target.style.display = "none";
                                             }}
-                                        />
+                                            />
+                                        </Link>
                                     </div>
                                 ))}
                             </div>
