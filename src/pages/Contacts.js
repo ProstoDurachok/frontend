@@ -155,7 +155,7 @@ const Contacts = () => {
 
                                         <button
                                             type="submit"
-                                            className="w-full inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] border border-[#e31e24]/20 hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)] hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
+                                            className="w-full inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] border border-[#e31e24]/20  hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20 relative overflow-hidden"
                                         >
                                             <span className="relative z-10 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">
                                                 Отправить заявку
@@ -213,7 +213,7 @@ const Contacts = () => {
                                                         {salon.phones.map(
                                                             (
                                                                 phone,
-                                                                phoneIndex
+                                                                phoneIndex,
                                                             ) => (
                                                                 <a
                                                                     key={
@@ -221,13 +221,13 @@ const Contacts = () => {
                                                                     }
                                                                     href={`tel:${phone.replace(
                                                                         /\s/g,
-                                                                        ""
+                                                                        "",
                                                                     )}`}
                                                                     className="text-gray-700 hover:text-[#e31e24] transition-colors duration-300 block"
                                                                 >
                                                                     {phone}
                                                                 </a>
-                                                            )
+                                                            ),
                                                         )}
                                                     </div>
                                                 </div>
@@ -312,8 +312,8 @@ const Contacts = () => {
                                         Почтовый адрес
                                     </h3>
                                     <p className="text-gray-700">
-                                        420061, РТ г. Казань ул. Н.Ершова, д.47/5
-                                        24/7
+                                        420061, РТ г. Казань ул. Н.Ершова,
+                                        д.47/5 24/7
                                     </p>
                                 </div>
 
@@ -322,8 +322,8 @@ const Contacts = () => {
                                         Физический адрес
                                     </h3>
                                     <p className="text-gray-700">
-                                        420061, РТ г. Казань ул. Н.Ершова, д.47/5
-                                        24/7
+                                        420061, РТ г. Казань ул. Н.Ершова,
+                                        д.47/5 24/7
                                     </p>
                                 </div>
 

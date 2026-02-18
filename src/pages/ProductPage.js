@@ -120,11 +120,14 @@ const ProductPage = () => {
 
             candidates = byAttrs;
 
-            if (candidates.length < 6 && currentProduct.brand !== "Без бренда") {
+            if (
+                candidates.length < 6 &&
+                currentProduct.brand !== "Без бренда"
+            ) {
                 const byBrand = mappedAll.filter(
                     (p) =>
                         p.brand === currentProduct.brand &&
-                        !candidates.some((c) => c.id === p.id)
+                        !candidates.some((c) => c.id === p.id),
                 );
                 candidates = [
                     ...candidates,
@@ -163,7 +166,7 @@ const ProductPage = () => {
 
             if (candidates.length < 6) {
                 const remaining = mappedAll.filter(
-                    (p) => !candidates.some((c) => c.id === p.id)
+                    (p) => !candidates.some((c) => c.id === p.id),
                 );
                 candidates = [
                     ...candidates,
@@ -193,24 +196,21 @@ const ProductPage = () => {
                     id: 1,
                     name: "Очки Ray-Ban Aviator",
                     price: 15000,
-                    image:
-                        "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                    image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
                     brand: "Ray-Ban",
                 },
                 {
                     id: 2,
                     name: "Оправы Prada PR 01OS",
                     price: 22000,
-                    image:
-                        "https://images.unsplash.com/photo-1591076482161-42ce6da69f67?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                    image: "https://images.unsplash.com/photo-1591076482161-42ce6da69f67?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
                     brand: "Prada",
                 },
                 {
                     id: 3,
                     name: "Солнцезащитные очки Gucci",
                     price: 28000,
-                    image:
-                        "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+                    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
                     brand: "Gucci",
                 },
             ]);
@@ -279,7 +279,8 @@ const ProductPage = () => {
             if (e.key === "ArrowLeft") {
                 setLightboxIndex(
                     (prev) =>
-                        (prev - 1 + product.images.length) % product.images.length
+                        (prev - 1 + product.images.length) %
+                        product.images.length,
                 );
                 setZoom(1);
                 setPan({ x: 0, y: 0 });
@@ -440,7 +441,10 @@ const ProductPage = () => {
                                 {/* Кнопка полноэкранного просмотра */}
                                 <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
                                     <button className="bg-white/90 backdrop-blur rounded-full p-3 shadow-xl hover:bg-white transition-colors">
-                                        <Maximize2 size={28} className="text-gray-800" />
+                                        <Maximize2
+                                            size={28}
+                                            className="text-gray-800"
+                                        />
                                     </button>
                                 </div>
 
@@ -456,16 +460,16 @@ const ProductPage = () => {
                                                 Math.min(
                                                     imageContainerRef.current.getBoundingClientRect()
                                                         .width - 220,
-                                                    magnifierPosition.x - 100
-                                                )
+                                                    magnifierPosition.x - 100,
+                                                ),
                                             )}px`,
                                             top: `${Math.max(
                                                 20,
                                                 Math.min(
                                                     imageContainerRef.current.getBoundingClientRect()
                                                         .height - 220,
-                                                    magnifierPosition.y - 100
-                                                )
+                                                    magnifierPosition.y - 100,
+                                                ),
                                             )}px`,
                                             backgroundImage: `url(${currentImage})`,
                                             backgroundRepeat: "no-repeat",
@@ -476,9 +480,10 @@ const ProductPage = () => {
                                                 imageContainerRef.current.getBoundingClientRect()
                                                     .height * 2.5
                                             }px`,
-                                            backgroundPosition: `${
-                                                -(magnifierPosition.x * 2.5 - 100)
-                                            }px ${-(magnifierPosition.y * 2.5 - 100)}px`,
+                                            backgroundPosition: `${-(
+                                                magnifierPosition.x * 2.5 -
+                                                100
+                                            )}px ${-(magnifierPosition.y * 2.5 - 100)}px`,
                                         }}
                                     />
                                 )}
@@ -493,11 +498,13 @@ const ProductPage = () => {
                                     {product.images.map((image, index) => (
                                         <button
                                             key={index}
-                                            onClick={() => setSelectedImage(index)}
+                                            onClick={() =>
+                                                setSelectedImage(index)
+                                            }
                                             className={`aspect-square rounded-2xl overflow-hidden relative transition-all duration-300 bg-white shadow-md hover:shadow-xl hover:scale-105 ${
                                                 selectedImage === index
                                                     ? "scale-105 shadow-xl bg-gradient-to-br from-gray-100 to-white"
-                                                    : "bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-gray-100"
+                                                    : "bg-gradient-to-br from-white to-gray-50 hover:from-white hover:to-gray-100"
                                             }`}
                                         >
                                             <img
@@ -505,7 +512,7 @@ const ProductPage = () => {
                                                 alt={`${product.name} — вид ${
                                                     index + 1
                                                 }`}
-                                                className="w-full h-full object-contain p-4 transform transition-transform duration-300 hover:scale-110"
+                                                className="w-full h-full object-contain p-4 transform bg-white transition-transform duration-300 hover:scale-110"
                                             />
                                         </button>
                                     ))}
@@ -527,7 +534,10 @@ const ProductPage = () => {
                                 </h1>
 
                                 <p className="text-base text-gray-600 mb-4">
-                                    Артикул: <span className="font-semibold text-[#c41c20]">{product.sku}</span>
+                                    Артикул:{" "}
+                                    <span className="font-semibold text-[#c41c20]">
+                                        {product.sku}
+                                    </span>
                                 </p>
 
                                 <p className="text-5xl font-bold text-[#e31e24] mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
@@ -562,7 +572,7 @@ const ProductPage = () => {
                                                         {value}
                                                     </span>
                                                 </div>
-                                            )
+                                            ),
                                         )}
                                     </div>
                                 </div>
@@ -576,8 +586,8 @@ const ProductPage = () => {
                                         addedToCart
                                             ? "bg-green-500 text-white shadow-[0_8px_32px_rgba(34,197,94,0.4)]"
                                             : !user
-                                            ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-[0_8px_32px_rgba(75,85,99,0.4)] hover:shadow-[0_12px_40px_rgba(75,85,99,0.5)]"
-                                            : "bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-[0_8px_32px_rgba(227,30,36,0.4)] hover:shadow-[0_12px_40px_rgba(227,30,36,0.5)]"
+                                              ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-[0_8px_32px_rgba(75,85,99,0.4)] hover:shadow-[0_12px_40px_rgba(75,85,99,0.5)]"
+                                              : "bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white  "
                                     } hover:-translate-y-1 hover:scale-105 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-t before:from-transparent before:to-white before:opacity-0 hover:before:opacity-20`}
                                     data-testid="add-to-cart-btn"
                                 >
@@ -743,7 +753,7 @@ const ProductPage = () => {
                                 setLightboxIndex(
                                     (prev) =>
                                         (prev - 1 + product.images.length) %
-                                        product.images.length
+                                        product.images.length,
                                 );
                                 setZoom(1);
                                 setPan({ x: 0, y: 0 });
@@ -755,7 +765,8 @@ const ProductPage = () => {
                             className="absolute right-8 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 rounded-full p-4 transition-colors"
                             onClick={() => {
                                 setLightboxIndex(
-                                    (prev) => (prev + 1) % product.images.length
+                                    (prev) =>
+                                        (prev + 1) % product.images.length,
                                 );
                                 setZoom(1);
                                 setPan({ x: 0, y: 0 });
@@ -841,7 +852,7 @@ const ProductPage = () => {
                                              transition-all duration-300 
                                              hover:-translate-y-2 hover:border-[#e31e24]/30"
                                 >
-                                    <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-white p-6">
+                                    <div className="aspect-[4/3] bg-gradient-to-br from-white to-white p-6">
                                         <img
                                             src={similarProduct.image}
                                             alt={similarProduct.name}
@@ -855,7 +866,7 @@ const ProductPage = () => {
                                         </div>
                                         <div className="text-lg font-bold text-[#c41c20] group-hover:text-[#e31e24] transition-colors">
                                             {similarProduct.price.toLocaleString(
-                                                "ru-RU"
+                                                "ru-RU",
                                             )}{" "}
                                             ₽
                                         </div>

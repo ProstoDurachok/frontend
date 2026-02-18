@@ -104,13 +104,13 @@ const Home = () => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add(
                             "animate-fade-in-up",
-                            "visible"
+                            "visible",
                         );
                         entry.target.style.opacity = "1";
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.1 },
         );
         document.querySelectorAll(".animate-on-scroll").forEach((el) => {
             observerRef.current?.observe(el);
@@ -182,7 +182,6 @@ const Home = () => {
             {/* Random Products Carousel — теперь с авто-скроллом как у брендов */}
             <section className="bg-gradient-to-r from-blue-50 to-white py-12">
                 <div className="max-w-7xl mx-auto px-4">
-
                     <div className="relative overflow-hidden">
                         {/* Градиент слева */}
                         <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-blue-50 via-blue-50/95 to-transparent z-10 pointer-events-none"></div>
@@ -192,30 +191,35 @@ const Home = () => {
                         <div className="flex overflow-hidden">
                             <div className="flex animate-infinite-scroll gap-5 md:gap-6">
                                 {/* Дублируем дважды для плавной бесконечной прокрутки */}
-                                {[...randomProducts, ...randomProducts].map((product, idx) => (
-                                    <Link
-                                        key={`${product.id}-${idx}`}
-                                        to={`/product/${product.id}`}
-                                        className="flex-shrink-0 w-44 sm:w-48 md:w-56 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
-                                    >
-                                        <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-white rounded-t-xl overflow-hidden p-3 md:p-4">
-                                            <img
-                                                src={product.image}
-                                                alt={product.name}
-                                                className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-400"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                        <div className="p-3 md:p-4">
-                                            <div className="text-xs md:text-sm text-[#9c0101] font-semibold mb-1 line-clamp-1">
-                                                {product.brand}
+                                {[...randomProducts, ...randomProducts].map(
+                                    (product, idx) => (
+                                        <Link
+                                            key={`${product.id}-${idx}`}
+                                            to={`/product/${product.id}`}
+                                            className="flex-shrink-0 w-44 sm:w-48 md:w-56 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+                                        >
+                                            <div className="aspect-[4/3] bg-gradient-to-br from-white to-white rounded-t-xl overflow-hidden p-3 md:p-4">
+                                                <img
+                                                    src={product.image}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-400"
+                                                    loading="lazy"
+                                                />
                                             </div>
-                                            <div className="text-base md:text-lg font-bold text-[#740000]">
-                                                {product.price.toLocaleString("ru-RU")} ₽
+                                            <div className="p-3 md:p-4">
+                                                <div className="text-xs md:text-sm text-[#9c0101] font-semibold mb-1 line-clamp-1">
+                                                    {product.brand}
+                                                </div>
+                                                <div className="text-base md:text-lg font-bold text-[#740000]">
+                                                    {product.price.toLocaleString(
+                                                        "ru-RU",
+                                                    )}{" "}
+                                                    ₽
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    ),
+                                )}
                             </div>
                         </div>
                     </div>
@@ -234,7 +238,6 @@ const Home = () => {
                             ))}
                         </div>
                     )}
-
                 </div>
             </section>
 
@@ -356,15 +359,18 @@ const Home = () => {
                                     <div
                                         key={`top-${index}`}
                                         className="flex-shrink-0 mx-4 md:mx-6 rounded-2xl p-6 transition-all duration-500 hover:scale-110 hover:shadow-2xl cursor-pointer bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white border border-gray-100/50 flex items-center justify-center w-32 md:w-40 h-24"
+                                    >
+                                        <Link
+                                            to={`/frames?brand=${encodeURIComponent(brand.name)}`}
                                         >
-                                        <Link to={`/frames?brand=${encodeURIComponent(brand.name)}`}>
                                             <img
-                                            src={brand.icon}
-                                            alt={brand.name}
-                                            className="w-full h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-500 hover:drop-shadow-lg"
-                                            onError={(e) => {
-                                                e.target.style.display = "none";
-                                            }}
+                                                src={brand.icon}
+                                                alt={brand.name}
+                                                className="w-full h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-500 hover:drop-shadow-lg"
+                                                onError={(e) => {
+                                                    e.target.style.display =
+                                                        "none";
+                                                }}
                                             />
                                         </Link>
                                     </div>
@@ -372,7 +378,6 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
 
@@ -414,7 +419,7 @@ const Home = () => {
                     <div className="flex flex-col sm:flex-row gap-6 justify-center animate-on-scroll opacity-0">
                         <Link
                             to="/frames"
-                            className="inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-full font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:shadow-[0_12px_40px_rgba(156,1,1,0.5)] hover:-translate-y-1 hover:scale-105"
+                            className="inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-full font-semibold transition-all duration-300 bg-gradient-to-r from-[#9c0101] to-[#740000] text-white shadow-[0_8px_32px_rgba(156,1,1,0.4)] hover:-translate-y-1 hover:scale-105"
                             style={{ position: "relative", overflow: "hidden" }}
                         >
                             <ShoppingBag size={24} />
