@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import First from "@/assets/about/first.png";
 import Second from "@/assets/about/second.jpg";
+import { Link } from "react-router-dom";
 
 const About = () => {
     const values = [
@@ -68,6 +69,26 @@ const About = () => {
 
     return (
         <div className="min-h-screen pt-20">
+            {/* Breadcrumbs */}
+            <nav className="bg-white py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+                <div className="max-w-7xl mx-auto">
+                    <ol className="flex items-center space-x-2 text-sm text-gray-500">
+                        <li>
+                            <Link 
+                                to="/" 
+                                className="hover:text-[#c41c20] transition-colors duration-200"
+                            >
+                                Главная
+                            </Link>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="mx-2">/</span>
+                            <span className="text-gray-900 font-medium">О нас</span>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+
             {/* Hero Section */}
             <section className="py-20 bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/80 text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_2px,transparent_0)] bg-[length:60px_60px]" />

@@ -197,6 +197,26 @@ const Frames = () => {
 
     return (
         <div className="min-h-screen pt-20">
+            {/* Breadcrumbs */}
+            <nav className="bg-white py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+                <div className="max-w-7xl mx-auto">
+                    <ol className="flex items-center space-x-2 text-sm text-gray-500">
+                        <li>
+                            <Link 
+                                to="/" 
+                                className="hover:text-[#c8102e] transition-colors duration-200"
+                            >
+                                Главная
+                            </Link>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="mx-2">/</span>
+                            <span className="text-gray-900 font-medium">Оправы</span>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+
             {/* Hero Section */}
             <section className="py-16 md:py-20 bg-gradient-to-br from-[#a50d24] via-[#c8102e] to-[#c8102e]/90 text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2)_2px,transparent_0)] bg-[length:50px_50px]" />

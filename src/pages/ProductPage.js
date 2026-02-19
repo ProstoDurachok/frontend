@@ -55,6 +55,10 @@ const ProductPage = () => {
     const [showMagnifier, setShowMagnifier] = useState(false);
     const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
 
+    // Category determination
+    const [categoryPath, setCategoryPath] = useState("/frames");
+    const [categoryName, setCategoryName] = useState("Оправы");
+
     const mapProduct = (wooProduct) => {
         const attributes = {};
         if (wooProduct.attributes && wooProduct.attributes.length > 0) {
@@ -242,6 +246,20 @@ const ProductPage = () => {
                 const mappedProduct = mapProduct(wooProduct);
                 setProduct(mappedProduct);
                 fetchSimilarProducts(mappedProduct);
+
+                // Определяем категорию
+                const categories = mappedProduct.categories || [];
+                if (categories.includes(108)) {
+                    setCategoryPath("/sunglasses");
+                    setCategoryName("Солнцезащитные очки");
+                } else if (categories.includes(104)) {
+                    setCategoryPath("/frames");
+                    setCategoryName("Оправы");
+                } else {
+                    // Default to frames if unknown
+                    setCategoryPath("/frames");
+                    setCategoryName("Оправы");
+                }
             } catch (err) {
                 console.error("Ошибка загрузки товара:", err);
                 setError(`Ошибка загрузки товара: ${err.message}`);
@@ -375,7 +393,7 @@ const ProductPage = () => {
                         {error || "Товар не найден"}
                     </p>
                     <Link
-                        to="/frames"
+                        to="/auth"
                         className="px-6 py-2 bg-[#e31e24] text-white rounded-lg hover:bg-[#c41c20] transition-colors inline-block"
                     >
                         Вернуться к каталогу
@@ -405,11 +423,42 @@ const ProductPage = () => {
 
     return (
         <div className="min-h-screen pt-20 bg-white">
+            {/* Breadcrumbs */}
+            <nav className="bg-white py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+                <div className="max-w-7xl mx-auto">
+                    <ol className="flex items-center space-x-2 text-sm text-gray-500">
+                        <li>
+                            <Link 
+                                to="/" 
+                                className="hover:text-[#e31e24] transition-colors duration-200"
+                            >
+                                Главная
+                            </Link>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="mx-2">/</span>
+                            <Link 
+                                to={categoryPath}
+                                className="hover:text-[#e31e24] transition-colors duration-200"
+                            >
+                                {categoryName}
+                            </Link>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="mx-2">/</span>
+                            <span className="text-gray-900 font-medium truncate max-w-[200px] md:max-w-[400px]">
+                                {product.name}
+                            </span>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+
             <section className="py-12">
                 <div className="max-w-7xl mx-auto px-4">
                     {/* Back Button */}
                     <Link
-                        to="/frames"
+                        to={categoryPath}
                         className="inline-flex items-center space-x-2 text-[#e31e24] hover:text-[#c41c20] transition-colors duration-300 mb-8 group"
                     >
                         <ArrowLeft

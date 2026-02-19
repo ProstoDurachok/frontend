@@ -63,10 +63,19 @@ const Delivery = () => {
         {
             title: "Условия возврата",
             items: [
-                "Возврат в течение 14 дней со дня получения",
+                "У返 в течение 14 дней со дня получения",
                 "Товар должен быть не использованным",
                 "Полная оригинальная комплектация",
                 "Сохранен товарный вид и упаковка",
+            ],
+        },
+        {
+            title: "Условия возврата",
+            items: [
+                "Условия возврата",
+                "Условия возврата",
+                "Условия возврата",
+                "Условия возврата",
             ],
         },
         {
@@ -105,6 +114,26 @@ const Delivery = () => {
 
     return (
         <div className="min-h-screen pt-20">
+            {/* Breadcrumbs */}
+            <nav className="bg-white py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+                <div className="max-w-7xl mx-auto">
+                    <ol className="flex items-center space-x-2 text-sm text-gray-500">
+                        <li>
+                            <Link 
+                                to="/" 
+                                className="hover:text-[#c41c20] transition-colors duration-200"
+                            >
+                                Главная
+                            </Link>
+                        </li>
+                        <li className="flex items-center">
+                            <span className="mx-2">/</span>
+                            <span className="text-gray-900 font-medium">Доставка и оплата</span>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+
             {/* Hero Section */}
             {/* Hero Section */}
             <section className="py-20 bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/80 text-white relative overflow-hidden">
