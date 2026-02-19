@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Lock, Check } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext"; // ← твой новый контекст
+import { User, CreditCard, Check, Mail, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const API = process.env.REACT_APP_API_URL || "https://egooptika.ru";
 
@@ -17,6 +17,7 @@ const Auth = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showLoyaltyCard, setShowLoyaltyCard] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,11 +31,11 @@ const Auth = () => {
     try {
       if (isLogin) {
         // ВХОД
-        await login(form.email, form.password); // ← вызывает реальный JWT-запрос
+        await login(form.email, form.password);
         setSuccess(true);
         setTimeout(() => navigate("/profile"), 1500);
       } else {
-        // РЕГИСТРАЦИЯ — как на твоём сайте (WP отправит письмо со ссылкой)
+        // РЕГИСТРАЦИЯ
         const res = await fetch(`${API}/wp-json/wp/v2/users`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -54,8 +55,12 @@ const Auth = () => {
           );
         }
 
+        // Автоматический вход после регистрации
+        await login(form.email, form.password);
+
         setSuccess(true);
-        setTimeout(() => navigate("/"), 3000); // после регистрации редирект на главную
+        setShowLoyaltyCard(true);
+        setTimeout(() => navigate("/profile"), 2000);
       }
     } catch (err) {
       setError(err.message);
@@ -64,9 +69,16 @@ const Auth = () => {
     }
   };
 
+  const resetForm = () => {
+    setForm({ email: "", password: "" });
+    setShowLoyaltyCard(false);
+    setSuccess(false);
+    setError(null);
+  };
+
   return (
     <div className="min-h-screen pt-20">
-      {/* Hero — без изменений */}
+      {/* Hero Section */}
       <section className="section-padding bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/80 text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_2px,transparent_0)] bg-[length:60px_60px]"></div>
         <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -76,24 +88,27 @@ const Auth = () => {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white [text-shadow:0_4px_8px_rgba(0,0,0,0.3)]">
             {isLogin ? "Вход" : "Регистрация"}
           </h1>
-          <p className="text-xl md:text-2xl text-white/90">
+          <p className="text-xl md:text-2xl text-white/90 [text-shadow:0_2px_4px_rgba(0,0,0,0.2)]">
             {isLogin
               ? "Войдите в свой аккаунт"
-              : "Создайте аккаунт в Эгооптике"}
+              : "Создайте аккаунт и получите карту лояльности"}
           </p>
         </div>
       </section>
 
-      {/* Форма */}
+      {/* Auth Form */}
       <section className="section-padding bg-gradient-to-br from-white to-blue-50 py-20">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl p-8 border border-white/80 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
 
-            {/* Переключатель */}
+            {/* Переключатель Вход / Регистрация */}
             <div className="flex bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl p-2 mb-8 shadow-inner border border-gray-300/50">
               <button
-                onClick={() => setIsLogin(true)}
+                onClick={() => {
+                  setIsLogin(true);
+                  resetForm();
+                }}
                 className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group ${
                   isLogin
                     ? "bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-lg transform scale-105"
@@ -103,11 +118,14 @@ const Auth = () => {
                 {isLogin && (
                   <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20 rounded-xl"></div>
                 )}
-                <span className="relative z-10">Войти</span>
+                <span className="relative z-10 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">Войти</span>
               </button>
 
               <button
-                onClick={() => setIsLogin(false)}
+                onClick={() => {
+                  setIsLogin(false);
+                  resetForm();
+                }}
                 className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group ${
                   !isLogin
                     ? "bg-gradient-to-r from-[#e31e24] to-[#c41c20] text-white shadow-lg transform scale-105"
@@ -117,7 +135,7 @@ const Auth = () => {
                 {!isLogin && (
                   <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20 rounded-xl"></div>
                 )}
-                <span className="relative z-10">Регистрация</span>
+                <span className="relative z-10 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">Регистрация</span>
               </button>
             </div>
 
@@ -134,7 +152,7 @@ const Auth = () => {
                 <p className="text-gray-600 mb-8">
                   {isLogin
                     ? "Перенаправляем в личный кабинет..."
-                    : "На почту отправлена ссылка для подтверждения. Перенаправляем на главную..."}
+                    : "На почту отправлена ссылка для подтверждения. Перенаправляем в профиль..."}
                 </p>
               </div>
             ) : (
@@ -207,7 +225,7 @@ const Auth = () => {
                 {isLogin && (
                   <div className="text-center mt-4">
                     <Link
-                      to="/forgot-password" // если есть страница восстановления
+                      to="/forgot-password"
                       className="text-[#e31e24] hover:underline text-sm"
                     >
                       Забыли пароль?
@@ -229,14 +247,91 @@ const Auth = () => {
         </div>
       </section>
 
-      {/* Преимущества — оставил как было, но можно убрать при желании */}
+      {/* Loyalty Card */}
+      {showLoyaltyCard && (
+        <section className="section-padding bg-gradient-to-br from-blue-50 to-white">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-center text-[#c41c20] mb-8 [text-shadow:0_2px_4px_rgba(0,0,0,0.1)]">
+              Ваша карта лояльности
+            </h2>
+            <div className="relative animate-scale-in">
+              <div className="bg-gradient-to-br from-[#c41c20] via-[#e31e24] to-[#e31e24]/90 rounded-2xl p-8 text-white relative overflow-hidden"
+                style={{
+                  boxShadow: '0 15px 35px rgba(227,30,36,0.4), inset 0 2px 8px rgba(255,255,255,0.2)'
+                }}>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+
+                <div className="flex justify-between items-start mb-12 relative z-10">
+                  <div>
+                    <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-2 shadow-lg">
+                      <span className="text-[#e31e24] font-bold text-xl">Э</span>
+                    </div>
+                    <p className="text-white font-bold text-lg">Эгооптика</p>
+                  </div>
+                  <CreditCard size={36} className="text-white/90" />
+                </div>
+                <div className="space-y-4 relative z-10">
+                  <div>
+                    <p className="text-sm text-white/80 mb-1">Владелец</p>
+                    <p className="text-lg font-bold">{form.email.split("@")[0] || 'Пользователь'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white/80 mb-1">Номер карты</p>
+                    <p className="text-xl font-mono tracking-wider">**** **** **** {Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</p>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-sm text-white/80 mb-1">Бонусы</p>
+                      <p className="text-2xl font-bold text-white">0 ₽</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-white/80">Скидка</p>
+                      <p className="text-xl font-bold text-white">5%</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 text-center">
+                <p className="text-gray-600">
+                  Показывайте эту карту при покупке и получайте бонусы!
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Преимущества регистрации */}
       <section className="section-padding bg-gradient-to-br from-white to-blue-50 py-16">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-[#c41c20] mb-12">
+          <h2 className="text-3xl font-bold text-center text-[#c41c20] mb-12 [text-shadow:0_2px_4px_rgba(0,0,0,0.1)]">
             Преимущества регистрации
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* твои карточки */}
+            <div className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/80">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#e31e24] to-[#c41c20] rounded-full text-white mb-4 shadow-lg">
+                <CreditCard size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-[#c41c20] mb-3">Карта лояльности</h3>
+              <p className="text-gray-600">Накапливайте бонусы и получайте скидки</p>
+            </div>
+
+            <div className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/80">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full text-white mb-4 shadow-lg">
+                <User size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-[#c41c20] mb-3">Личный кабинет</h3>
+              <p className="text-gray-600">Отслеживайте заказы и историю покупок</p>
+            </div>
+
+            <div className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/80">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#e31e24] to-[#c41c20] rounded-full text-white mb-4 shadow-lg">
+                <Check size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-[#c41c20] mb-3">Спецпредложения</h3>
+              <p className="text-gray-600">Первыми узнавайте о скидках и акциях</p>
+            </div>
           </div>
         </div>
       </section>

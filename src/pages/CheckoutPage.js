@@ -28,12 +28,12 @@ const CheckoutPage = () => {
     comment: "",
   });
 
-  // Поля ввода от руки
-  const [formData, setFormData] = useState({
-    firstName: user?.name?.split(" ")[0] || "",
-    lastName: user?.name?.split(" ").slice(1).join(" ") || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
+  // Отдельные поля для заказа (не связаны с пользователем)
+  const [orderFormData, setOrderFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -44,10 +44,13 @@ const CheckoutPage = () => {
 
   const finalTotal = totalPrice;
 
+  // Имя пользователя из профиля (неизменяемое)
+  const userName = user?.name || user?.display_name || user?.email?.split('@')[0] || 'Пользователь';
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (["firstName", "lastName", "email", "phone"].includes(name)) {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setOrderFormData((prev) => ({ ...prev, [name]: value }));
       setErrors((prev) => ({ ...prev, [name]: "" }));
     } else {
       setOrderData((prev) => ({ ...prev, [name]: value }));
@@ -57,12 +60,12 @@ const CheckoutPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = "Укажите имя";
-    if (!formData.lastName.trim()) newErrors.lastName = "Укажите фамилию";
-    if (!formData.email.trim()) newErrors.email = "Укажите email";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Некорректный email";
-    if (!formData.phone.trim()) newErrors.phone = "Укажите телефон";
-    else if (!/^\+?\d{10,15}$/.test(formData.phone.replace(/\D/g, ""))) newErrors.phone = "Некорректный телефон";
+    if (!orderFormData.firstName.trim()) newErrors.firstName = "Укажите имя";
+    if (!orderFormData.lastName.trim()) newErrors.lastName = "Укажите фамилию";
+    if (!orderFormData.email.trim()) newErrors.email = "Укажите email";
+    else if (!/\S+@\S+\.\S+/.test(orderFormData.email)) newErrors.email = "Некорректный email";
+    if (!orderFormData.phone.trim()) newErrors.phone = "Укажите телефон";
+    else if (!/^\+?\d{10,15}$/.test(orderFormData.phone.replace(/\D/g, ""))) newErrors.phone = "Некорректный телефон";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -94,16 +97,13 @@ const CheckoutPage = () => {
       const pickupAddress = pickupPoints[orderData.pickupPoint] || pickupPoints.ershov;
 
       const payload = {
-        payment_method: orderData.paymentType,
-        payment_method_title:
-          orderData.paymentType === "card" ? "Банковской картой онлайн" : "Наличными при получении",
-        status: "on-hold",
-        set_paid: false,
+        payment_method: orderData.paymentType === "card" ? "bacs" : "cod",
+        payment_method_title: orderData.paymentType === "card" ? "Банковской картой онлайн" : "Наличными при получении",
         billing: {
-          first_name: formData.firstName.trim(),
-          last_name: formData.lastName.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
+          first_name: orderFormData.firstName.trim(),
+          last_name: orderFormData.lastName.trim(),
+          email: orderFormData.email.trim(),
+          phone: orderFormData.phone.trim(),
           address_1: pickupAddress,
           city: "Казань",
           state: "TA",
@@ -111,8 +111,8 @@ const CheckoutPage = () => {
           country: "RU",
         },
         shipping: {
-          first_name: formData.firstName.trim(),
-          last_name: formData.lastName.trim(),
+          first_name: orderFormData.firstName.trim(),
+          last_name: orderFormData.lastName.trim(),
           address_1: pickupAddress,
           city: "Казань",
           state: "TA",
@@ -120,23 +120,28 @@ const CheckoutPage = () => {
           country: "RU",
         },
         line_items: lineItems,
-        // customer_id: parseInt(user.id) || 0,  // ← закомментируй эту строку
         customer_note: orderData.comment || "",
         meta_data: [
           { key: "pickup_point", value: orderData.pickupPoint },
           { key: "_created_from", value: "frontend-react" },
+          { key: "customer_name", value: `${orderFormData.firstName} ${orderFormData.lastName}` },
+          { key: "customer_email", value: orderFormData.email },
+          { key: "customer_phone", value: orderFormData.phone },
+          // Сохраняем данные пользователя для связи
+          { key: "user_login", value: userName },
+          { key: "user_email", value: user?.email || "" },
         ],
       };
 
-      // Для отладки — смотри в консоли, что уходит
       console.log("Отправляемый payload:", JSON.stringify(payload, null, 2));
 
-      const res = await fetch(`${API}/wp-json/wc/v3/orders`, {
+      const res = await fetch(`${API}/wp-json/custom/v1/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -144,16 +149,13 @@ const CheckoutPage = () => {
 
       if (!res.ok) {
         console.error("Ответ сервера:", data);
-        throw new Error(
-          data.message ||
-            errData?.code ||
-            `Ошибка ${res.status}: ${res.statusText}`
-        );
+        throw new Error(data.message || data.code || `Ошибка ${res.status}`);
       }
 
-      setOrderId(data.id);
+      setOrderId(data.order_id);
       setOrderSuccess(true);
       clearCart();
+      
     } catch (err) {
       console.error("Ошибка оформления:", err);
       setError(err.message || "Не удалось оформить заказ. Попробуйте позже.");
@@ -247,6 +249,19 @@ const CheckoutPage = () => {
             </h1>
           </div>
 
+          {/* Информация о пользователе (неизменяемая) */}
+          <div className="bg-blue-50 rounded-2xl p-4 mb-6 border border-blue-200">
+            <div className="flex items-center space-x-3">
+              <User size={20} className="text-[#e31e24]" />
+              <span className="text-sm text-gray-700">
+                Вы авторизованы как: <span className="font-bold text-[#c41c20]">{userName}</span>
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1 ml-8">
+              Данные для заказа можно ввести ниже, они не изменят ваш профиль
+            </p>
+          </div>
+
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl mb-6">
               {error}
@@ -287,21 +302,24 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Личные данные */}
+            {/* Данные для заказа (отдельные поля) */}
             <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-6 border border-gray-100">
               <h3 className="text-xl font-bold text-[#c41c20] mb-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center">
                 <User size={24} className="mr-3 text-[#e31e24]" />
-                Ваши данные
+                Данные получателя
               </h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Эти данные будут использованы только для этого заказа
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Имя *
+                    Имя получателя *
                   </label>
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.firstName}
+                    value={orderFormData.firstName}
                     onChange={handleChange}
                     className={`w-full p-3 border rounded-xl focus:border-[#e31e24] focus:ring-2 focus:ring-[#e31e24]/20 outline-none transition-all ${
                       errors.firstName ? "border-red-500" : "border-gray-300"
@@ -313,12 +331,12 @@ const CheckoutPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Фамилия *
+                    Фамилия получателя *
                   </label>
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.lastName}
+                    value={orderFormData.lastName}
                     onChange={handleChange}
                     className={`w-full p-3 border rounded-xl focus:border-[#e31e24] focus:ring-2 focus:ring-[#e31e24]/20 outline-none transition-all ${
                       errors.lastName ? "border-red-500" : "border-gray-300"
@@ -330,14 +348,14 @@ const CheckoutPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
+                    Email для заказа *
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
                       type="email"
                       name="email"
-                      value={formData.email}
+                      value={orderFormData.email}
                       onChange={handleChange}
                       className={`w-full pl-10 p-3 border rounded-xl focus:border-[#e31e24] focus:ring-2 focus:ring-[#e31e24]/20 outline-none transition-all ${
                         errors.email ? "border-red-500" : "border-gray-300"
@@ -350,14 +368,14 @@ const CheckoutPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Телефон *
+                    Телефон для заказа *
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
                       type="tel"
                       name="phone"
-                      value={formData.phone}
+                      value={orderFormData.phone}
                       onChange={handleChange}
                       className={`w-full pl-10 p-3 border rounded-xl focus:border-[#e31e24] focus:ring-2 focus:ring-[#e31e24]/20 outline-none transition-all ${
                         errors.phone ? "border-red-500" : "border-gray-300"
