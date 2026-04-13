@@ -242,7 +242,7 @@ const ProductPage = () => {
             brandId: wooProduct.etheme_brands?.[0]?.id || null,
             categories: wooProduct.categories?.map((cat) => cat.id) || [],
             price: parseInt(wooProduct.price || 0),
-            description: wooProduct.description || "Описание отсутствует.",
+            description: wooProduct.short_description || "Описание отсутствует.",
             images: wooProduct.images?.map((img) => img.src) || [],
             specs: attributes,
             sku: wooProduct.sku || "Не указан",
