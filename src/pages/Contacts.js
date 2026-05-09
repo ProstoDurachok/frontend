@@ -42,7 +42,7 @@ const Contacts = () => {
         {
             name: "Салон на Ершова",
             address: "г. Казань, Николая Ершова, 47",
-            phones: ["+7 (951) 896-71-17"],
+            phones: ["+7 (843) 528-07-08", "+7 (951) 896-71-17"],
             hours: "Пн-Пт: 10:00 — 20:00 Сб: 10:00 — 18:00 Вс: выходной",
             image: Ershowa,
             mapUrl: "https://yandex.ru/maps/org/egooptika/73340528068/",
@@ -50,7 +50,7 @@ const Contacts = () => {
         {
             name: "Салон на Меридианной",
             address: "г. Казань, Меридианная, 4",
-            phones: ["+7 (939) 809-52-80"],
+            phones: ["+7 (843) 528-07-08", "+7 (939) 809-52-80"],
             hours: "Пн-Пт: 9:00 — 20:00 Сб: 10:00 — 19:00 Вс: выходной",
             image: Meridian,
             mapUrl: "https://yandex.ru/maps/org/egooptika/138533122876/",
@@ -279,13 +279,13 @@ const Contacts = () => {
                                         </h3>
                                     </div>
                                     <a
-                                        href="https://wa.me/79398074779"
+                                        href="https://wa.me/79398095280"
                                         className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-300"
                                     >
                                         <MessageCircle size={20} />
-                                        <span>+7 (939) 807-47-79</span>
+                                        <span>+7 (939) 809-52-80</span>
                                         <span className="text-sm bg-white/20 px-2 py-1 rounded-full">
-                                            MAX Telegram
+                                            Мессенджеры
                                         </span>
                                     </a>
                                 </div>
@@ -348,7 +348,7 @@ const Contacts = () => {
                                     </p>
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <h3 className="font-semibold text-[#c41c20] mb-2">
                                         Юридический адрес
                                     </h3>
@@ -356,7 +356,7 @@ const Contacts = () => {
                                         420029, РТ г. Казань ул. Сибирский тракт
                                         24/7
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
